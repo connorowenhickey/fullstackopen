@@ -1,0 +1,10 @@
+{
+  "persons": [
+    {
+      "name": "Quinten Slomber",
+      "number": "074532 23432",
+      "id": "Ebvfee7E_JY"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
