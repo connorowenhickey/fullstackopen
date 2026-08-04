@@ -38,6 +38,11 @@ let persons = [
     }
 ]
 
+app.get('/', (request, response) => {
+  response.send('<h1>Phonebook backend is running</h1>')
+})
+
+
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
