@@ -10,7 +10,8 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "build:ui": "rm -rf dist && cd ../../part2/phonebook && npm run build && cp -r dist ../../part3/phonebook-backend",
-    "deploy:full": "npm run build:ui && git -C ../.. add part2/phonebook part3/phonebook-backend && git -C ../.. commit -m \"uibuild\" && git -C ../.. push"
+    "deploy:full": "npm run build:ui && git -C ../.. add part2/phonebook part3/phonebook-backend && git -C ../.. commit -m \"uibuild\" && git -C ../.. push",
+    "lint": "eslint ."
   },
   "dependencies": {
     "dotenv": "^17.4.2",
