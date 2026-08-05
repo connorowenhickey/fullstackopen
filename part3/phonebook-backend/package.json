@@ -11,10 +11,8 @@
     "dev": "node --watch index.js",
     "build:ui": "rm -rf dist && cd ../../part2/phonebook && npm run build && cp -r dist ../../part3/phonebook-backend",
     "deploy:full": "npm run build:ui && git -C ../.. add part2/phonebook part3/phonebook-backend && git -C ../.. commit -m \"uibuild\" && git -C ../.. push"
-    
   },
   "dependencies": {
-    "cors": "^2.8.6",
     "express": "^5.2.1",
     "morgan": "^1.11.0"
   }
