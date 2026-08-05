@@ -40,7 +40,7 @@ const App = () => {
           })
           .catch(error => {
             setNotification({
-              message: error.response.data.error,
+              message: error.response?.data?.error || 'Something went wrong',
               type: 'error'
             })
             setTimeout(() => {
@@ -67,7 +67,7 @@ const App = () => {
       })
       .catch(error => {
         setNotification({
-          message: error.response.data.error,
+          message: error.response?.data?.error || 'Something went wrong',
           type: 'error'
         })
         setTimeout(() => {
