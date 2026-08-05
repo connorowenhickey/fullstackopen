@@ -45,7 +45,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -59,9 +59,13 @@ app.post('/api/persons', (request, response) => {
     number: body.number
   })
 
-  person.save().then(savedPerson => {
+  person
+    .save()
+    .then(savedPerson => {
     response.status(201).json(savedPerson)
   })
+    .catch(error => next(error))
+
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -108,7 +112,7 @@ const errorHandler = (error, request, response, next) => {
     })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({
-      error: ErrorEvent.message
+      error: error.message
     })
   }
 
