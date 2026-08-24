@@ -1,0 +1,29 @@
+{
+  "anecdotes": [
+    {
+      "id": 1,
+      "content": "Make it work, then make it fast",
+      "votes": 0
+    },
+    {
+      "id": 2,
+      "content": "There are two hard things in computer science",
+      "votes": 3
+    },
+    {
+      "id": 3,
+      "content": "Untested code is broken code",
+      "votes": 4
+    },
+    {
+      "id": 4,
+      "content": "Simplicity is the ultimate sophistication",
+      "votes": 5
+    },
+    {
+      "id": 5,
+      "content": "Real artists ship code",
+      "votes": 7
+    }
+  ]
+}
