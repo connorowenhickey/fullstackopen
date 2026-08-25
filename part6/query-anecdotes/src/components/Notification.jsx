@@ -1,16 +1,24 @@
+import useNotify from '../hooks/useNotify'
+
 const Notification = () => {
+  const { notification } = useNotify()
+
+  if (!notification) {
+    return null
+  }
+
   const style = {
     border: 'solid',
     padding: 10,
-    borderWidth: 1,
-    marginBottom: 5
+    borderWidth: 1
   }
-  
-  if (true) return null
 
   return (
-    <div style={style}>
-      
+    <div
+      style={style}
+      data-testid="notification"
+    >
+      {notification}
     </div>
   )
 }

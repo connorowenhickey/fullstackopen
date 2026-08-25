@@ -1,4 +1,6 @@
 import useAnecdotes from './hooks/useAnecdotes'
+import useNotify from './hooks/useNotify'
+import Notification from './components/Notification'
 
 const App = () => {
   const {
@@ -9,13 +11,29 @@ const App = () => {
     vote
   } = useAnecdotes()
 
+  const { notify } = useNotify()
+
   const handleSubmit = event => {
     event.preventDefault()
 
     const content = event.target.anecdote.value
     event.target.reset()
 
-    addAnecdote(content)
+    addAnecdote(content, {
+      onSuccess: () => {
+        notify(`anecdote '${content}' created`)
+      },
+
+      onError: () => {
+        notify('too short anecdote, must have length 5 or more')
+      }
+    })
+  }
+
+  const handleVote = anecdote => {
+    vote(anecdote)
+
+    notify(`you voted '${anecdote.content}'`)
   }
 
   if (isPending) {
@@ -34,6 +52,8 @@ const App = () => {
     <div>
       <h3>Anecdotes</h3>
 
+      <Notification />
+
       {anecdotes.map(anecdote => (
         <div key={anecdote.id}>
           <div>
@@ -43,7 +63,7 @@ const App = () => {
           <div>
             has {anecdote.votes} votes
 
-            <button onClick={() => vote(anecdote)}>
+            <button onClick={() => handleVote(anecdote)}>
               vote
             </button>
           </div>

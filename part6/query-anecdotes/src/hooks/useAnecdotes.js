@@ -39,13 +39,16 @@ const useAnecdotes = () => {
     }
   })
 
-  const addAnecdote = content => {
-    newAnecdoteMutation.mutate({
-      content,
-      votes: 0
-    })
+  const addAnecdote = (content, options) => {
+    newAnecdoteMutation.mutate(
+      {
+        content,
+        votes: 0
+      },
+      options
+    )
   }
-
+  
   const vote = anecdote => {
     updateAnecdoteMutation.mutate({
       ...anecdote,
