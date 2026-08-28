@@ -12,16 +12,14 @@ const Togglable = (props) => {
 
   useImperativeHandle(props.ref, () => {
     return {
-      toggleVisibility
+      toggleVisibility,
     }
   })
 
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>
-          {props.buttonLabel}
-        </button>
+        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
 
       <div style={showWhenVisible}>

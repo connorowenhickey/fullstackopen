@@ -1,75 +1,133 @@
 import {
-  Paper,
-  Typography,
+  Box,
   Button,
-  Stack,
-  Link
+  List,
+  ListItem,
+  TextField,
+  Typography,
 } from '@mui/material'
+
+import useField from '../hooks/useField'
 
 const Blog = ({
   blog,
   handleLike,
   handleRemove,
-  user
+  handleComment,
+  user,
 }) => {
+  const comment = useField('text')
+
   if (!blog) {
     return null
   }
 
+  const submitComment = async (event) => {
+    event.preventDefault()
+
+    await handleComment(comment.input.value)
+
+    comment.reset()
+  }
+
+  const canRemove =
+    user &&
+    blog.user &&
+    (blog.user.username === user.username ||
+      blog.user.id === user.id)
+
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        padding: 3,
-        marginTop: 3,
-        maxWidth: 700
-      }}
-    >
-      <Typography
-        variant="h4"
-        sx={{ marginBottom: 2 }}
-      >
+    <Box sx={{ mt: 3 }}>
+      <Typography variant="h4">
         {blog.title} {blog.author}
       </Typography>
 
-      <Stack spacing={2}>
-        <Link
-          href={blog.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      <div>
+        <a href={blog.url}>
           {blog.url}
-        </Link>
+        </a>
+      </div>
 
-        <Typography>
-          likes {blog.likes}
+      <div>
+        {blog.likes} likes{' '}
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleLike}
+        >
+          like
+        </Button>
+      </div>
+
+      <div>
+        added by {blog.user?.name}
+      </div>
+
+      {canRemove && (
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleRemove}
+          sx={{ mt: 1 }}
+        >
+          remove
+        </Button>
+      )}
+
+      <Typography
+        variant="h5"
+        sx={{ mt: 3 }}
+      >
+        comments
+      </Typography>
+
+      <Box
+        component="form"
+        onSubmit={submitComment}
+        sx={{
+          display: 'flex',
+          gap: 1,
+          mt: 2,
+          mb: 2,
+          maxWidth: 600,
+        }}
+      >
+        <TextField
+          label="add a comment"
+          size="small"
+          fullWidth
+          {...comment.input}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+        >
+          comment
+        </Button>
+      </Box>
+
+      {blog.comments?.length > 0 ? (
+        <List>
+          {blog.comments.map((comment, index) => (
+            <ListItem
+              key={index}
+              sx={{
+                display: 'list-item',
+                listStyleType: 'disc',
+                ml: 4,
+              }}
+            >
+              {comment}
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Typography sx={{ mt: 2 }}>
+          no comments
         </Typography>
-
-        {user &&
-          <Button
-            variant="contained"
-            onClick={handleLike}
-            sx={{ alignSelf: 'flex-start' }}
-          >
-            like
-          </Button>
-        }
-
-        <Typography>
-          added by {blog.user?.name}
-        </Typography>
-
-        {blog.user?.username === user?.username &&
-          <Button
-            variant="outlined"
-            onClick={handleRemove}
-            sx={{ alignSelf: 'flex-start' }}
-          >
-            remove
-          </Button>
-        }
-      </Stack>
-    </Paper>
+      )}
+    </Box>
   )
 }
 

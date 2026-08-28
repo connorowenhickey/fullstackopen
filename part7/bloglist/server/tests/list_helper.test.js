@@ -17,8 +17,8 @@ describe('total likes', () => {
       author: 'Edsger W. Dijkstra',
       url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
       likes: 5,
-      __v: 0
-    }
+      __v: 0,
+    },
   ]
 
   test('when list has only one blog, equals the likes of that', () => {

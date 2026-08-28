@@ -19,7 +19,7 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
-  
+
   if (error.name === 'ValidationError') {
     return response.status(400).json({
       error: error.message,
@@ -33,11 +33,11 @@ const errorHandler = (error, request, response, next) => {
   }
 
   if (error.name === 'JsonWebTokenError') {
-  return response.status(401).json({
-    error: 'token invalid',
-  })
-}
-  
+    return response.status(401).json({
+      error: 'token invalid',
+    })
+  }
+
   next(error)
 }
 
@@ -60,11 +60,8 @@ const userExtractor = async (request, response, next) => {
         error: 'token missing',
       })
     }
-    
-    const decodedToken = jwt.verify(
-      request.token,
-      process.env.SECRET
-    )
+
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
     if (!decodedToken.id) {
       return response.status(401).json({

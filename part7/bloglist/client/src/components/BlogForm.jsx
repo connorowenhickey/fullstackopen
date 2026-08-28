@@ -1,10 +1,5 @@
 import { useState } from 'react'
-import {
-  TextField,
-  Button,
-  Box,
-  Typography
-} from '@mui/material'
+import { TextField, Button, Box, Typography } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -17,7 +12,7 @@ const BlogForm = ({ createBlog }) => {
     createBlog({
       title,
       author,
-      url
+      url,
     })
 
     setTitle('')
@@ -27,10 +22,7 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <Box sx={{ mt: 3 }}>
-      <Typography
-        variant="h5"
-        sx={{ mb: 2 }}
-      >
+      <Typography variant="h5" sx={{ mb: 2 }}>
         create new
       </Typography>
 
@@ -41,37 +33,28 @@ const BlogForm = ({ createBlog }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
-          maxWidth: 400
+          maxWidth: 400,
         }}
       >
         <TextField
           label="title"
           value={title}
-          onChange={({ target }) =>
-            setTitle(target.value)
-          }
+          onChange={({ target }) => setTitle(target.value)}
         />
 
         <TextField
           label="author"
           value={author}
-          onChange={({ target }) =>
-            setAuthor(target.value)
-          }
+          onChange={({ target }) => setAuthor(target.value)}
         />
 
         <TextField
           label="url"
           value={url}
-          onChange={({ target }) =>
-            setUrl(target.value)
-          }
+          onChange={({ target }) => setUrl(target.value)}
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-        >
+        <Button type="submit" variant="contained">
           create
         </Button>
       </Box>

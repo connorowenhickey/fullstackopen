@@ -11,8 +11,8 @@ const blog = {
   user: {
     id: '456',
     username: 'Connor123',
-    name: 'Connor'
-  }
+    name: 'Connor',
+  },
 }
 
 test('unauthenticated user sees blog information but no buttons', () => {
@@ -22,26 +22,24 @@ test('unauthenticated user sees blog information but no buttons', () => {
       handleLike={vi.fn()}
       handleRemove={vi.fn()}
       user={null}
-    />
+    />,
   )
 
   expect(screen.getByText('Testing React Connor')).toBeVisible()
   expect(screen.getByText('https://example.com')).toBeVisible()
   expect(screen.getByText('likes 5')).toBeVisible()
 
-  expect(
-    screen.queryByRole('button', { name: 'like' })
-  ).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'like' })).not.toBeInTheDocument()
 
   expect(
-    screen.queryByRole('button', { name: 'remove' })
+    screen.queryByRole('button', { name: 'remove' }),
   ).not.toBeInTheDocument()
 })
 
 test('authenticated non-creator sees only the like button', () => {
   const otherUser = {
     username: 'OtherUser',
-    name: 'Other User'
+    name: 'Other User',
   }
 
   render(
@@ -50,22 +48,20 @@ test('authenticated non-creator sees only the like button', () => {
       handleLike={vi.fn()}
       handleRemove={vi.fn()}
       user={otherUser}
-    />
+    />,
   )
 
-  expect(
-    screen.getByRole('button', { name: 'like' })
-  ).toBeVisible()
+  expect(screen.getByRole('button', { name: 'like' })).toBeVisible()
 
   expect(
-    screen.queryByRole('button', { name: 'remove' })
+    screen.queryByRole('button', { name: 'remove' }),
   ).not.toBeInTheDocument()
 })
 
 test('blog creator sees like and remove buttons', () => {
   const creator = {
     username: 'Connor123',
-    name: 'Connor'
+    name: 'Connor',
   }
 
   render(
@@ -74,15 +70,10 @@ test('blog creator sees like and remove buttons', () => {
       handleLike={vi.fn()}
       handleRemove={vi.fn()}
       user={creator}
-    />
+    />,
   )
 
-  expect(
-    screen.getByRole('button', { name: 'like' })
-  ).toBeVisible()
+  expect(screen.getByRole('button', { name: 'like' })).toBeVisible()
 
-  expect(
-    screen.getByRole('button', { name: 'remove' })
-  ).toBeVisible()
+  expect(screen.getByRole('button', { name: 'remove' })).toBeVisible()
 })
-

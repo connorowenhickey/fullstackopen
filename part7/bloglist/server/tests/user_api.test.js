@@ -19,10 +19,7 @@ test('username must be at least 3 characters long', async () => {
     password: 'secret',
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
+  await api.post('/api/users').send(newUser).expect(400)
 
   const usersAtEnd = await User.find({})
 
@@ -36,10 +33,7 @@ test('password must be at least 3 characters long', async () => {
     password: 'ab',
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
+  await api.post('/api/users').send(newUser).expect(400)
 
   const usersAtEnd = await User.find({})
 
@@ -52,10 +46,7 @@ test('username is required', async () => {
     password: 'secret',
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
+  await api.post('/api/users').send(newUser).expect(400)
 
   const usersAtEnd = await User.find({})
 
@@ -68,10 +59,7 @@ test('password is required', async () => {
     name: 'No Password',
   }
 
-  await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
+  await api.post('/api/users').send(newUser).expect(400)
 
   const usersAtEnd = await User.find({})
 
@@ -85,10 +73,7 @@ test('username must be unique', async () => {
     password: 'secret',
   }
 
-  await api
-    .post('/api/users')
-    .send(firstUser)
-    .expect(201)
+  await api.post('/api/users').send(firstUser).expect(201)
 
   const duplicateUser = {
     username: 'connor',
@@ -96,10 +81,7 @@ test('username must be unique', async () => {
     password: 'anothersecret',
   }
 
-  await api
-    .post('/api/users')
-    .send(duplicateUser)
-    .expect(400)
+  await api.post('/api/users').send(duplicateUser).expect(400)
 
   const usersAtEnd = await User.find({})
 

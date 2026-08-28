@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix client",
-    "start": "NODE_ENV=production npm start --prefix server"
+    "start": "NODE_ENV=production npm start --prefix server",
+    "format": "prettier --write client/src server"   
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "concurrently": "^10.0.5"
+    "concurrently": "^10.0.5",
+    "prettier": "^3.9.6"
   }
 }

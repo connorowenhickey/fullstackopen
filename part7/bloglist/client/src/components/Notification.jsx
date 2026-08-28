@@ -10,7 +10,7 @@ const Notification = ({ notification }) => {
       severity={notification.type}
       sx={{
         marginTop: 2,
-        marginBottom: 2
+        marginBottom: 2,
       }}
     >
       {notification.text}

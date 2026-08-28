@@ -5,7 +5,7 @@ const User = require('../models/user')
 testingRouter.post('/reset', async (request, response) => {
   if (process.env.NODE_ENV !== 'test') {
     return response.status(403).json({
-      error: 'reset only allowed in test environment'
+      error: 'reset only allowed in test environment',
     })
   }
 

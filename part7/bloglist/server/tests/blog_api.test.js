@@ -51,12 +51,10 @@ beforeEach(async () => {
   savedUser.blogs = savedBlogs.map((blog) => blog._id)
   await savedUser.save()
 
-  const loginResponse = await api
-    .post('/api/login')
-    .send({
-      username: 'Connor123',
-      password: 'test123',
-    })
+  const loginResponse = await api.post('/api/login').send({
+    username: 'Connor123',
+    password: 'test123',
+  })
 
   token = loginResponse.body.token
 })
@@ -71,10 +69,7 @@ test('blogs are returned as json', async () => {
 test('the correct number of blogs is returned', async () => {
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    response.body.length,
-    initialBlogs.length
-  )
+  assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
 test('the unique identifier property is named id', async () => {
@@ -103,10 +98,7 @@ test('a valid blog can be added', async () => {
 
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    response.body.length,
-    initialBlogs.length + 1
-  )
+  assert.strictEqual(response.body.length, initialBlogs.length + 1)
 
   const titles = response.body.map((blog) => blog.title)
 
@@ -145,10 +137,7 @@ test('a blog without a title is not added', async () => {
 
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    response.body.length,
-    initialBlogs.length
-  )
+  assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
 test('a blog without a url is not added', async () => {
@@ -166,10 +155,7 @@ test('a blog without a url is not added', async () => {
 
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    response.body.length,
-    initialBlogs.length
-  )
+  assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
 test('a blog can be deleted', async () => {
@@ -183,10 +169,7 @@ test('a blog can be deleted', async () => {
 
   const blogsAtEnd = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    blogsAtEnd.body.length,
-    initialBlogs.length - 1
-  )
+  assert.strictEqual(blogsAtEnd.body.length, initialBlogs.length - 1)
 
   const ids = blogsAtEnd.body.map((blog) => blog.id)
 
@@ -207,29 +190,21 @@ test('the likes of a blog can be increased', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  assert.strictEqual(
-    response.body.likes,
-    blogToUpdate.likes + 1
-  )
+  assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
 
   const blogsAtEnd = await api.get('/api/blogs')
 
   const blogInDatabase = blogsAtEnd.body.find(
-    (blog) => blog.id === blogToUpdate.id
+    (blog) => blog.id === blogToUpdate.id,
   )
 
-  assert.strictEqual(
-    blogInDatabase.likes,
-    blogToUpdate.likes + 1
-  )
+  assert.strictEqual(blogInDatabase.likes, blogToUpdate.likes + 1)
 })
 
 test('the likes of a blog can be decreased', async () => {
   const blogsAtStart = await api.get('/api/blogs')
 
-  const blogToUpdate = blogsAtStart.body.find(
-    (blog) => blog.likes > 0
-  )
+  const blogToUpdate = blogsAtStart.body.find((blog) => blog.likes > 0)
 
   assert(blogToUpdate)
 
@@ -243,21 +218,15 @@ test('the likes of a blog can be decreased', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  assert.strictEqual(
-    response.body.likes,
-    blogToUpdate.likes - 1
-  )
+  assert.strictEqual(response.body.likes, blogToUpdate.likes - 1)
 
   const blogsAtEnd = await api.get('/api/blogs')
 
   const blogInDatabase = blogsAtEnd.body.find(
-    (blog) => blog.id === blogToUpdate.id
+    (blog) => blog.id === blogToUpdate.id,
   )
 
-  assert.strictEqual(
-    blogInDatabase.likes,
-    blogToUpdate.likes - 1
-  )
+  assert.strictEqual(blogInDatabase.likes, blogToUpdate.likes - 1)
 })
 
 test('adding a blog fails with 401 if token is not provided', async () => {
@@ -268,17 +237,11 @@ test('adding a blog fails with 401 if token is not provided', async () => {
     likes: 5,
   }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(401)
+  await api.post('/api/blogs').send(newBlog).expect(401)
 
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    response.body.length,
-    initialBlogs.length
-  )
+  assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
 after(async () => {

@@ -4,17 +4,17 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const middleware = require('../utils/middleware')
 
-
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog
-    .find({})
-    .populate('user', { username: 1, name: 1 })
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
 
   response.json(blogs)
 })
 
-blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
-  try {
+blogsRouter.post(
+  '/',
+  middleware.userExtractor,
+  async (request, response, next) => {
+    try {
       const body = request.body
       const user = request.user
 
@@ -33,17 +33,21 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response, next) 
 
       await savedBlog.populate('user', {
         username: 1,
-        name: 1
+        name: 1,
       })
 
       response.status(201).json(savedBlog)
     } catch (error) {
       next(error)
     }
-})
+  },
+)
 
-blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
-  try {
+blogsRouter.delete(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response, next) => {
+    try {
       const user = request.user
 
       const blog = await Blog.findById(request.params.id)
@@ -64,7 +68,8 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, n
     } catch (error) {
       next(error)
     }
-})
+  },
+)
 
 blogsRouter.put('/:id', async (request, response) => {
   const updatedBlog = await Blog.findByIdAndUpdate(
@@ -73,14 +78,33 @@ blogsRouter.put('/:id', async (request, response) => {
     {
       returnDocument: 'after',
       runValidators: true,
-    }
-  )
-  .populate('user', { username: 1, name: 1 })
+    },
+  ).populate('user', { username: 1, name: 1 })
 
   if (updatedBlog) {
     response.json(updatedBlog)
   } else {
     response.status(404).end()
+  }
+})
+
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  try {
+    const blog = await Blog.findById(request.params.id)
+
+    if (!blog) {
+      return response.status(404).end()
+    }
+
+    const comment = request.body.comment
+
+    blog.comments = blog.comments.concat(comment)
+
+    const updatedBlog = await blog.save()
+
+    response.status(201).json(updatedBlog)
+  } catch (error) {
+    next(error)
   }
 })
 
