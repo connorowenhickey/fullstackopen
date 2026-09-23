@@ -2,8 +2,26 @@ require('dotenv').config({ quiet: true })
 
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
+
+const express = require('express')
+const cors = require('cors')
+const http = require('http')
+
 const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
+const {
+  ApolloServerPluginDrainHttpServer,
+} = require('@apollo/server/plugin/drainHttpServer')
+
+const {
+  expressMiddleware,
+} = require('@as-integrations/express5')
+
+const {
+  makeExecutableSchema,
+} = require('@graphql-tools/schema')
+
+const { WebSocketServer } = require('ws')
+const { useServer } = require('graphql-ws/use/ws')
 
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
@@ -17,37 +35,94 @@ const start = async () => {
 
     console.log('connected to MongoDB')
 
-    const server = new ApolloServer({
+    const schema = makeExecutableSchema({
       typeDefs,
       resolvers,
     })
 
-    const { url } = await startStandaloneServer(server, {
-      listen: { port: 4000 },
+    const app = express()
 
-      context: async ({ req }) => {
-        const auth = req.headers.authorization
+    const httpServer = http.createServer(app)
 
-        if (auth && auth.startsWith('Bearer ')) {
-          const decodedToken = jwt.verify(
-            auth.substring(7),
-            process.env.JWT_SECRET
-          )
-
-          const currentUser = await User.findById(
-            decodedToken.id
-          ).exec()
-
-          return { currentUser }
-        }
-
-        return {}
-      },
+    const wsServer = new WebSocketServer({
+      server: httpServer,
+      path: '/graphql',
     })
 
-    console.log(`Server ready at ${url}`)
+    const serverCleanup = useServer(
+      {
+        schema,
+      },
+      wsServer
+    )
+
+    const server = new ApolloServer({
+      schema,
+
+      plugins: [
+        ApolloServerPluginDrainHttpServer({
+          httpServer,
+        }),
+
+        {
+          async serverWillStart() {
+            return {
+              async drainServer() {
+                await serverCleanup.dispose()
+              },
+            }
+          },
+        },
+      ],
+    })
+
+    await server.start()
+
+    app.use(
+      '/',
+      cors(),
+      express.json(),
+
+      expressMiddleware(server, {
+        context: async ({ req }) => {
+          const auth = req.headers.authorization
+
+          if (
+            auth &&
+            auth.startsWith('Bearer ')
+          ) {
+            const decodedToken = jwt.verify(
+              auth.substring(7),
+              process.env.JWT_SECRET
+            )
+
+            const currentUser =
+              await User.findById(
+                decodedToken.id
+              ).exec()
+
+            return { currentUser }
+          }
+
+          return {}
+        },
+      })
+    )
+
+    httpServer.listen(4000, () => {
+      console.log(
+        'Server ready at http://localhost:4000'
+      )
+
+      console.log(
+        'Subscriptions ready at ws://localhost:4000/graphql'
+      )
+    })
   } catch (error) {
-    console.log('error starting server:', error.message)
+    console.log(
+      'error starting server:',
+      error.message
+    )
   }
 }
 

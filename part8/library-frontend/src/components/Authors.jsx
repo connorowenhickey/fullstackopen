@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client/react'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
-const Authors = (props) => {
+const Authors = ({ show, token }) => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
 
@@ -12,12 +12,16 @@ const Authors = (props) => {
     refetchQueries: [{ query: ALL_AUTHORS }],
   })
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
   if (result.loading) {
     return <div>loading...</div>
+  }
+
+  if (result.error) {
+    return <div>Error: {result.error.message}</div>
   }
 
   const authors = result.data.allAuthors
@@ -48,51 +52,60 @@ const Authors = (props) => {
             <th>books</th>
           </tr>
 
-          {authors.map((a) => (
-            <tr key={a.name}>
-              <td>{a.name}</td>
-              <td>{a.born}</td>
-              <td>{a.bookCount}</td>
+          {authors.map((author) => (
+            <tr key={author.name}>
+              <td>{author.name}</td>
+              <td>{author.born}</td>
+              <td>{author.bookCount}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>Set birthyear</h2>
+      {token && (
+        <>
+          <h2>Set birthyear</h2>
 
-      <form onSubmit={submit}>
-        <div>
-          name
-          <select
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          >
-            <option value="">select author</option>
+          <form onSubmit={submit}>
+            <div>
+              <label>
+                name
+                <select
+                  name="name"
+                  value={name}
+                  onChange={({ target }) => setName(target.value)}
+                >
+                  <option value="">select author</option>
 
-            {authors.map((author) => (
-              <option
-                key={author.name}
-                value={author.name}
-              >
-                {author.name}
-              </option>
-            ))}
-          </select>
-        </div>
+                  {authors.map((author) => (
+                    <option
+                      key={author.name}
+                      value={author.name}
+                    >
+                      {author.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
 
-        <div>
-          born
-          <input
-            type="number"
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
-        </div>
+            <div>
+              <label>
+                born
+                <input
+                  type="number"
+                  value={born}
+                  onChange={({ target }) => setBorn(target.value)}
+                />
+              </label>
+            </div>
 
-        <button type="submit">
-          update author
-        </button>
-      </form>
+            <button type="submit">
+              update author
+            </button>
+          </form>
+        </>
+      )}
     </div>
   )
 }

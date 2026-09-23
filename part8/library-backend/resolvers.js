@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken')
 const { GraphQLError } = require('graphql')
+const { PubSub } = require('graphql-subscriptions')
 
 const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
+
+const pubsub = new PubSub()
 
 const resolvers = {
   Query: {
@@ -22,25 +25,53 @@ const resolvers = {
         filter.genres = args.genre
       }
 
+      if (args.author) {
+        const author = await Author.findOne({
+          name: args.author,
+        }).exec()
+
+        if (!author) {
+          return []
+        }
+
+        filter.author = author._id
+      }
+
       return await Book.find(filter)
         .populate('author')
         .exec()
     },
 
     allAuthors: async () => {
-      return await Author.find({}).exec()
+      return await Author.aggregate([
+        {
+          $lookup: {
+            from: 'books',
+            localField: '_id',
+            foreignField: 'author',
+            as: 'books',
+          },
+        },
+        {
+          $addFields: {
+            bookCount: {
+              $size: '$books',
+            },
+            id: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $project: {
+            books: 0,
+          },
+        },
+      ]).exec()
     },
 
     me: (_root, _args, context) => {
       return context.currentUser
-    },
-  },
-
-  Author: {
-    bookCount: async (author) => {
-      return await Book.countDocuments({
-        author: author._id,
-      })
     },
   },
 
@@ -78,6 +109,10 @@ const resolvers = {
 
         await book.save()
         await book.populate('author')
+
+        pubsub.publish('BOOK_ADDED', {
+          bookAdded: book,
+        })
 
         return book
       } catch (error) {
@@ -184,6 +219,13 @@ const resolvers = {
       await User.deleteMany({})
 
       return true
+    },
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () =>
+        pubsub.asyncIterableIterator(['BOOK_ADDED']),
     },
   },
 }
