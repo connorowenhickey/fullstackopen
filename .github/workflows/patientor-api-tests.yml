@@ -1,0 +1,44 @@
+name: Patientor API Tests
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install backend dependencies
+        working-directory: ./part9/fs-typescript/patientor/backend
+        run: npm install
+
+      - name: Build backend
+        working-directory: ./part9/fs-typescript/patientor/backend
+        run: npm run build
+
+      - name: Start backend
+        working-directory: ./part9/fs-typescript/patientor/backend
+        run: |
+          npm start &
+          sleep 3
+
+      - name: Install API test dependencies
+        working-directory: ./part9/fs-typescript/patientor-api-tests
+        run: npm install
+
+      - name: Install Playwright
+        working-directory: ./part9/fs-typescript/patientor-api-tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Run API tests
+        working-directory: ./part9/fs-typescript/patientor-api-tests
+        run: npm test
