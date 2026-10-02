@@ -1,0 +1,1 @@
+{"version":3,"file":"patients.js","sourceRoot":"","sources":["../../data/patients.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAgB,MAAM,iBAAiB,CAAC;AAEvD,MAAM,QAAQ,GAAc;IAC1B;QACE,EAAE,EAAE,sCAAsC;QAC1C,IAAI,EAAE,cAAc;QACpB,WAAW,EAAE,YAAY;QACzB,GAAG,EAAE,aAAa;QAClB,MAAM,EAAE,MAAM,CAAC,IAAI;QACnB,UAAU,EAAE,mBAAmB;KAChC;CACF,CAAC;AAEF,eAAe,QAAQ,CAAC"}
